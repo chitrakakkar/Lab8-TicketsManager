@@ -23,7 +23,7 @@ public class TicketManager
 
 
         //Ask for some ticket info, create tickets, store in ticketQueue
-        ReadingIntoAFile();
+        //ReadingIntoAFile();
 
         while(true)
         {
@@ -35,13 +35,16 @@ public class TicketManager
                 //Call addTickets, which will let us enter any number of new tickets
                 addTickets(ticketQueue);
 
-            } else if (task == 2) {
+            }
+            //added as per the question
+            else if (task == 2) {
                 //delete a ticket
                 deleteTicketByID(ticketQueue);
                 System.out.println(ticketResolved);
 
 
             }
+            //deleting by issue
             else if(task ==3)
             {
                 DeleteByIssue(ticketQueue);
@@ -51,6 +54,7 @@ public class TicketManager
             {
                 SearchByName(ticketQueue);
             }
+            //prints all the tickets
             else if ( task == 5 )
             {
                 printAllTickets(ticketQueue);
@@ -60,6 +64,7 @@ public class TicketManager
 
 
             }
+            //quit program and also write info to the file
             else if(task ==6)
 
             {
@@ -69,6 +74,7 @@ public class TicketManager
                 break;
 
             }
+            //catch all
             else
             {
 
@@ -81,8 +87,9 @@ public class TicketManager
 
     }
     //********************DeleteTicketByID Method*****************************
-    //Problem 2
-    protected static void deleteTicketByID(LinkedList<Ticket> ticketQueue) {
+    //Problem 2-Delete a ticket by Id Number
+    protected static void deleteTicketByID(LinkedList<Ticket> ticketQueue) throws IOException
+    {
         printAllTickets(ticketQueue);   //display list for user
 
         if (ticketQueue.size() == 0) {    //no tickets!
@@ -93,14 +100,15 @@ public class TicketManager
 
         //Loop over all tickets. Delete the one with this ticket ID
         boolean found = true;
+        //Validation for correct Id info
         while ((found))
         {
-            int deleteID = GetDeletedID();
+            int deleteID = GetDeletedID(); // validation for user input for Id
             for (Ticket ticket : ticketQueue) {
                 if (ticket.getTicketID() == deleteID) {
                     found = false;
                     //ticketQueue.remove(ticket);
-                    resolvedTicket(ticket);
+                    resolvedTicket(ticket,ticketResolved);
                     System.out.println(String.format("Ticket %d deleted", deleteID));
                     break; //don't need loop any more.
                 }
@@ -167,7 +175,7 @@ public class TicketManager
             System.out.println("Enter priority of " + description);
             priority = Integer.parseInt(sc.nextLine());
             TicketId = GetTicketID();
-
+            //creating ticket objects
             Ticket t = new Ticket(description, priority, reporter, dateReported,TicketId);
             ticketQueue.add(t);
 
@@ -236,6 +244,7 @@ public class TicketManager
         tickets.addLast(newTicket);
     }
 //*************************Search by Issue************************************
+    //gets the ticket queue to look for string in every ticket inside the list
     private static LinkedList<Ticket> SearchByName(LinkedList<Ticket>TicketList) {
         LinkedList<Ticket> Results = new LinkedList<Ticket>();
         if (TicketList.isEmpty())
@@ -250,7 +259,6 @@ public class TicketManager
             for (Ticket ticket : TicketList
                     )
             {
-                //if (ticket.getDescription().contains(description))
                 if(ticket.getReporter().contains(description))
                 {
                     Results.add(ticket);
@@ -270,17 +278,17 @@ public class TicketManager
 
 
 //******************DeleteByIssue*******************************
-
-    public static void DeleteByIssue(LinkedList<Ticket>TicketList)
+    // gets the ticket list again to search for string/name to delete by ID
+    public static void DeleteByIssue(LinkedList<Ticket>TicketList) throws  IOException
     {
         LinkedList<Ticket> Issues = SearchByName(TicketList);
         deleteTicketByID(Issues);
 
     }
-
-    public static void resolvedTicket(Ticket T)
+    // a user-defined method to find the resolved tickets
+    public static void resolvedTicket(Ticket T,LinkedList<Ticket> TicketQueue) throws IOException
     {
-
+        // every resolved ticket has a resolution date
 
         Date date = new Date();
         T.setResolveDate(date);
@@ -290,7 +298,13 @@ public class TicketManager
         T.setResolution(resolution);
         ticketResolved.add(T);
         ticketQueue.remove(T);
+        FileWriter out = new FileWriter("Resolution.txt");
+        for (Ticket T1:TicketQueue
+             ) {
+            out.write("The resolution for Ticket \n " + T1.ticketID + " is " + T1.getResolution() + "\n And The date when it got resolved is  " + T1.getResolveDate());
+        }
 
+        out.close();
     }
 
     protected static void printAllTickets(LinkedList<Ticket> tickets) {
@@ -304,7 +318,6 @@ public class TicketManager
 
 
     }
-
 
     public static void WriteIntoAFile(LinkedList<Ticket> TicketQueue,LinkedList<Ticket>ticketResolved) throws IOException
     {
@@ -330,6 +343,7 @@ public class TicketManager
     }
 
 //**************Need to work on formatting date from the open tickets****
+    // This reads into a file and extracts data to create ticket objects when program runs
     public static void ReadingIntoAFile() throws IOException
     {
         LinkedList<String> TicketList = new LinkedList<>();
@@ -360,20 +374,17 @@ public class TicketManager
                 ReportDate =formatter.parse(st.split(":")[3]);
            TicketId = Integer.parseInt(st.split(":")[4]);
 
-        } catch (ParseException e){
-            e.printStackTrace();}
+        } //for date parsing, it was asking for an exception
+            catch (ParseException e)
+            {
+            e.printStackTrace();
+            }
         }
         Ticket t = new Ticket(description,Priority,Reporter,ReportDate,TicketId);
         ticketQueue.add(t);
         reader.close();
         bufReader.close();
-
-
     }
-
-
-
-
     }
 
 

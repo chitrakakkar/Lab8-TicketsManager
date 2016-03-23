@@ -71,6 +71,10 @@ public class Ticket
         return(this.description + " Priority: " + this.priority + " Reported by: "
                 + this.reporter + " Reported on: " + this.dateReported + " : Ticket_ID "+ticketID);
     }
+    public String AdditionalData(Ticket T)
+    {
+        return ("The resolution for Ticket  " + T + " is " + this.getResolution() + "\n And The date when it got resolved is  " + T.getResolveDate());
+    }
     public Integer getTicketID()
     {
         return ticketID;
