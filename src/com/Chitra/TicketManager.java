@@ -368,7 +368,7 @@ public class TicketManager
             try{
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 
-            description = st.split(";")[0];
+            description = st.split(":")[0];
             Priority =  Integer.parseInt(st.split(":")[1]);
             Reporter = st.split(":")[2];
                 ReportDate =formatter.parse(st.split(":")[3]);
