@@ -2,6 +2,7 @@ package com.Chitra;
 import java.io.*;
 import java.sql.*;
 import java.text.DateFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -23,7 +24,7 @@ public class TicketManager
 
 
         //Ask for some ticket info, create tickets, store in ticketQueue
-        //ReadingIntoAFile(); -> still need to work on this..
+        ReadingIntoAFile(); //-> still need to work on this..
 
         while(true)
         {
@@ -301,7 +302,7 @@ public class TicketManager
         FileWriter out = new FileWriter("Resolution.txt");
         for (Ticket T1:TicketQueue
              ) {
-            out.write("The resolution for Ticket \n " + T1.ticketID + " is " + T1.getResolution() + "\n And The date when it got resolved is  " + T1.getResolveDate());
+            out.write("The resolution for Ticket " + T1.ticketID + " is " + T1.getResolution() + "\n And The date when it got resolved is  " + T1.getResolveDate());
         }
 
         out.close();
@@ -348,11 +349,12 @@ public class TicketManager
     {
         LinkedList<String> TicketList = new LinkedList<>();
         String description=" ";
-        Integer Priority =0;
-        String Reporter = "";
+        String Priority =" "; int FinalPriority =0;
+        String Reporter = "";String FinalReporter = "";
         String myTextDate = "01/12/2006";
-        Date ReportDate = new Date(myTextDate);
-        Integer TicketId = 0;
+        Date ReportDate = new Date(myTextDate);Date FinalReportDate = new Date(myTextDate);
+        String TicketId = "";
+        Integer FinalTicketId = 0;
 
 
         FileReader reader = new FileReader("Open Ticket.txt");
@@ -367,12 +369,17 @@ public class TicketManager
              ) {
             try{
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+                DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 
-            description = st.split(":")[0];
-            Priority =  Integer.parseInt(st.split(":")[1]);
-            Reporter = st.split(":")[2];
-                ReportDate =formatter.parse(st.split(":")[3]);
-           TicketId = Integer.parseInt(st.split(":")[4]);
+            description = st.split("->")[0];
+            Priority =  (st.split("->")[1]);
+                FinalPriority = Integer.parseInt(Priority.split(":")[1]);
+            Reporter = st.split("->")[2];
+                FinalReporter = Reporter.split(":")[1];
+                ReportDate =formatter.parse(st.split("->")[3]);
+                FinalReportDate = format.parse(ReportDate.toString().split(":")[2]);
+           TicketId = (st.split("->")[4]);
+                FinalTicketId = Integer.parseInt(TicketId.split(":")[2]);
 
         } //for date parsing, it was asking for an exception
             catch (ParseException e)
@@ -380,7 +387,7 @@ public class TicketManager
             e.printStackTrace();
             }
         }
-        Ticket t = new Ticket(description,Priority,Reporter,ReportDate,TicketId);
+        Ticket t = new Ticket(description,FinalPriority,FinalReporter,FinalReportDate,FinalTicketId);
         ticketQueue.add(t);
         reader.close();
         bufReader.close();
